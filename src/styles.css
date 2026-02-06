@@ -1,0 +1,518 @@
+@import url('https://fonts.googleapis.com/css2?family=Creepster&family=Special+Elite&display=swap');
+
+:root {
+  --color-blood: #8b2500;
+  --color-rust: #5a3d2b;
+  --color-sickly: #3d5a3d;
+  --color-flesh: #d4b896;
+  --color-bone: #c9b896;
+  --color-void: #0a0a0a;
+  --color-shadow: #1a1a1a;
+  --font-horror: 'Creepster', cursive;
+  --font-body: 'Special Elite', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-void);
+  font-family: var(--font-body);
+  color: var(--color-flesh);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* Grain overlay */
+.grain-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  animation: grain 0.5s steps(10) infinite;
+}
+
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -10%); }
+  20% { transform: translate(-15%, 5%); }
+  30% { transform: translate(7%, -25%); }
+  40% { transform: translate(-5%, 25%); }
+  50% { transform: translate(-15%, 10%); }
+  60% { transform: translate(15%, 0%); }
+  70% { transform: translate(0%, 15%); }
+  80% { transform: translate(3%, 35%); }
+  90% { transform: translate(-10%, 10%); }
+}
+
+/* Vignette */
+.vignette {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 90;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 40%,
+    rgba(0, 0, 0, 0.4) 70%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+}
+
+/* Scare flash */
+.scare-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 200;
+  background: var(--color-blood);
+  animation: scarePulse 0.5s ease-out forwards;
+}
+
+@keyframes scarePulse {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
+
+/* Start Screen */
+.start-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    180deg,
+    var(--color-void) 0%,
+    #0d0808 50%,
+    var(--color-void) 100%
+  );
+  padding: 1rem;
+  text-align: center;
+}
+
+.start-title {
+  font-family: var(--font-horror);
+  font-size: clamp(3rem, 12vw, 6rem);
+  color: var(--color-blood);
+  text-shadow:
+    0 0 20px rgba(139, 37, 0, 0.8),
+    0 0 40px rgba(139, 37, 0, 0.5),
+    0 0 60px rgba(139, 37, 0, 0.3);
+  letter-spacing: 0.1em;
+  animation: titleFlicker 3s infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes titleFlicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.4; }
+  94% { opacity: 1; }
+  96% { opacity: 0.6; }
+  97% { opacity: 1; }
+}
+
+.start-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+  color: var(--color-flesh);
+  opacity: 0.7;
+  max-width: 80%;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.start-btn {
+  font-family: var(--font-horror);
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
+  padding: 1rem 3rem;
+  background: transparent;
+  border: 2px solid var(--color-blood);
+  color: var(--color-blood);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.2em;
+  min-height: 60px;
+  min-width: 200px;
+}
+
+.start-btn:hover, .start-btn:active {
+  background: var(--color-blood);
+  color: var(--color-void);
+  box-shadow: 0 0 30px rgba(139, 37, 0, 0.6);
+  transform: scale(1.05);
+}
+
+.start-instructions {
+  position: absolute;
+  bottom: 4rem;
+  font-size: clamp(0.65rem, 2vw, 0.8rem);
+  color: var(--color-flesh);
+  opacity: 0.5;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+/* Game Over Screen */
+.gameover-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 10, 10, 0.95);
+  animation: fadeIn 1s ease-out;
+  padding: 1rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gameover-title {
+  font-family: var(--font-horror);
+  font-size: clamp(3rem, 15vw, 7rem);
+  color: var(--color-blood);
+  text-shadow:
+    0 0 30px rgba(139, 37, 0, 0.9),
+    0 0 60px rgba(139, 37, 0, 0.6);
+  animation: deathPulse 1.5s infinite;
+}
+
+@keyframes deathPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.8; }
+}
+
+.gameover-text {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  color: var(--color-flesh);
+  opacity: 0.6;
+  margin: 1.5rem 0 2.5rem;
+}
+
+.restart-btn {
+  font-family: var(--font-horror);
+  font-size: clamp(1rem, 3vw, 1.4rem);
+  padding: 0.8rem 2.5rem;
+  background: var(--color-blood);
+  border: none;
+  color: var(--color-void);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.15em;
+  min-height: 54px;
+}
+
+.restart-btn:hover, .restart-btn:active {
+  background: #a82e00;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(139, 37, 0, 0.7);
+}
+
+/* Game UI */
+.game-ui {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.ui-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stat-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stat-label {
+  font-family: var(--font-body);
+  font-size: clamp(0.6rem, 2vw, 0.75rem);
+  color: var(--color-flesh);
+  opacity: 0.8;
+  width: 60px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stat-track {
+  flex: 1;
+  max-width: 150px;
+  height: 8px;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(139, 37, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.stat-fill.sanity {
+  background: linear-gradient(90deg, var(--color-sickly), #5a8a5a);
+}
+
+.stat-fill.battery {
+  background: linear-gradient(90deg, #8a7a20, #c9b840);
+}
+
+.stat-fill.low {
+  animation: lowPulse 0.5s infinite;
+}
+
+@keyframes lowPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Messages */
+.messages {
+  position: absolute;
+  top: 5rem;
+  left: 1rem;
+  right: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.message {
+  font-family: var(--font-body);
+  font-size: clamp(0.7rem, 2.2vw, 0.85rem);
+  color: var(--color-flesh);
+  background: rgba(10, 10, 10, 0.85);
+  padding: 0.5rem 0.8rem;
+  border-left: 2px solid var(--color-blood);
+  animation: messageIn 0.3s ease-out;
+  max-width: fit-content;
+}
+
+@keyframes messageIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Controls */
+.controls {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  pointer-events: auto;
+  padding: 0 1rem;
+}
+
+.control-btn {
+  width: clamp(60px, 15vw, 80px);
+  height: clamp(60px, 15vw, 80px);
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.9);
+  border: 2px solid var(--color-rust);
+  color: var(--color-flesh);
+  font-family: var(--font-body);
+  font-size: clamp(0.55rem, 1.8vw, 0.7rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+}
+
+.control-btn.active {
+  background: rgba(139, 37, 0, 0.3);
+  border-color: var(--color-blood);
+  box-shadow: 0 0 15px rgba(139, 37, 0, 0.4);
+}
+
+.control-btn.disabled {
+  opacity: 0.4;
+  border-color: var(--color-shadow);
+}
+
+.control-icon {
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+}
+
+/* Joystick area */
+.joystick-area {
+  position: absolute;
+  bottom: 6rem;
+  left: 1rem;
+  width: clamp(100px, 25vw, 130px);
+  height: clamp(100px, 25vw, 130px);
+  border-radius: 50%;
+  background: rgba(26, 26, 26, 0.5);
+  border: 2px solid rgba(90, 61, 43, 0.5);
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.joystick-inner {
+  width: 40%;
+  height: 40%;
+  border-radius: 50%;
+  background: rgba(139, 37, 0, 0.6);
+  border: 2px solid var(--color-blood);
+  transition: transform 0.1s ease;
+}
+
+/* Look area hint */
+.look-hint {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  color: var(--color-flesh);
+  opacity: 0.3;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  color: var(--color-flesh);
+  opacity: 0.25;
+  z-index: 30;
+  white-space: nowrap;
+  letter-spacing: 0.05em;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .joystick-area {
+    bottom: 7rem;
+  }
+
+  .look-hint {
+    display: none;
+  }
+}
+
+/* Crosshair */
+.crosshair {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.crosshair::before,
+.crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--color-flesh);
+  opacity: 0.4;
+}
+
+.crosshair::before {
+  width: 2px;
+  height: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.crosshair::after {
+  width: 100%;
+  height: 2px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Heartbeat effect on low sanity */
+.heartbeat {
+  animation: heartbeat 0.8s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    box-shadow: inset 0 0 50px rgba(139, 37, 0, 0.3);
+  }
+  50% {
+    box-shadow: inset 0 0 100px rgba(139, 37, 0, 0.6);
+  }
+}
